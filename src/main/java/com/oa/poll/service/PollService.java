@@ -20,10 +20,9 @@ public class PollService implements IPollService {
         dbService.addSubmission(submitPollRequest);
 
         return SubmitPollResponse.builder()
-                .message("Poll submission received and successfully handled.")
-                .mostPopularVeggie(dbService.findMostPopularVeggies())
-                .leastPopularVeggie(dbService.findLeastPopularVeggies())
-                .averageFrequency(dbService.findAverageFrequency())
+                .mostPopularVeggies(dbService.findMostPopularVeggies())
+                .leastPopularVeggies(dbService.findLeastPopularVeggies())
+                .averagePercentage(dbService.findAverageFrequency())
                 .build();
     }
 }

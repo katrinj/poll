@@ -2,6 +2,7 @@ package com.oa.poll.dto;
 
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import static com.oa.poll.dataconfig.PollDataConfig.PERCENTAGE_MAX;
 
 @Data
 @AllArgsConstructor
+@Builder
 public class SubmitPollRequest {
     @NotBlank(message = "Email is required.")
     @Email(message = "Email should be in valid format.")
@@ -19,10 +21,10 @@ public class SubmitPollRequest {
     private String email;
 
     @NotEmpty(message = "List of liked veggies is required.")
-    private List<String> likedVeggies;
+    private List<Integer> likedVeggies;
 
     @NotEmpty(message = "List of disliked veggies is required.")
-    private List<String> dislikedVeggies;
+    private List<Integer> dislikedVeggies;
 
     @NotNull(message = "Percentage is required.")
     @Min(value = PERCENTAGE_MIN, message = "Percentage must not be lower than " + PERCENTAGE_MIN)

@@ -1,6 +1,7 @@
 package com.oa.poll.service;
 
 import com.oa.poll.dto.SubmitPollRequest;
+import com.oa.poll.entity.IndividualEntry;
 import com.oa.poll.entity.PercentageStats;
 import com.oa.poll.entity.PollSubmission;
 import com.oa.poll.entity.Veggie;
@@ -16,9 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.oa.poll.dataconfig.PollDataConfig.INITIAL_DATA;
-import static com.oa.poll.dataconfig.PollDataConfig.PERCENTAGE_MIN;
-import static com.oa.poll.dataconfig.PollDataConfig.PERCENTAGE_MAX;
+import static com.oa.poll.dataconfig.PollDataConfig.*;
 
 @Component
 public class H2DbService implements DbService {
@@ -30,8 +29,8 @@ public class H2DbService implements DbService {
 
 
 
-    H2DbService(VeggieRepo veggieRepo, PercentageStatsRepo percentageStatsRepo, PollSubmissionRepo pollSubmissionRepo
-            , IndividualEntryRepo individualEntryRepo, IDataMapper dataMapper) {
+    H2DbService(VeggieRepo veggieRepo, PercentageStatsRepo percentageStatsRepo, PollSubmissionRepo pollSubmissionRepo,
+                IndividualEntryRepo individualEntryRepo, IDataMapper dataMapper) {
         this.veggieRepo = veggieRepo;
         this.percentageStatsRepo = percentageStatsRepo;
         this.pollSubmissionRepo = pollSubmissionRepo;
@@ -41,46 +40,57 @@ public class H2DbService implements DbService {
         initDB();
     }
 
+    void checkDBConfig(List<String> veggiesNamesEt, List<String> veggiesNamesEn) {
+        if (veggiesNamesEt.size() != veggiesNamesEn.size()) {
+            throw new IllegalStateException("Illegal db configuration: veggie lists should be of same size");
+        }
+    }
+
     private void initDB() {
-        INITIAL_DATA.forEach(veggie -> addVeggie(Veggie.builder().name(veggie).build()));
+        checkDBConfig(VEGGIE_NAMES_ET, VEGGIE_NAMES_EN);
+
+        for (int i = 0; i < VEGGIE_NAMES_ET.size(); i++) {
+            addVeggie(Veggie.builder().name_et(VEGGIE_NAMES_ET.get(i)).name_en(VEGGIE_NAMES_EN.get(i)).build());
+        }
+
         addMinMax(PercentageStats.builder().min(PERCENTAGE_MIN).max(PERCENTAGE_MAX).build());
     }
 
-    private void addVeggie(Veggie vegetable) {
-        veggieRepo.save(vegetable);
+    Veggie addVeggie(Veggie vegetable) {
+        return veggieRepo.save(vegetable);
     }
 
-    private void addMinMax(PercentageStats percentageStats) {
-        percentageStatsRepo.save(percentageStats);
+    PercentageStats addMinMax(PercentageStats percentageStats) {
+        return percentageStatsRepo.save(percentageStats);
     }
 
     @Override
-    public List<String> findMostPopularVeggies() {
+    public List<Integer> findMostPopularVeggies() {
         List<Veggie> orderedVeggies = veggieRepo.findAllByOrderByLikeCountDesc();
-        List<String> topVeggies = new ArrayList<>();
+        List<Integer> topVeggies = new ArrayList<>();
         long highestCount = 0;
         for (Veggie veggie : orderedVeggies) {
             if (highestCount > veggie.getLikeCount()) {
                 break;
             } else if (veggie.getLikeCount() > 0) {
                 highestCount = veggie.getLikeCount();
-                topVeggies.add(veggie.getName());
+                topVeggies.add(veggie.getId());
             }
         }
         return topVeggies;
     }
 
     @Override
-    public List<String> findLeastPopularVeggies() {
+    public List<Integer> findLeastPopularVeggies() {
         List<Veggie> orderedVeggies = veggieRepo.findAllByOrderByDislikeCountDesc();
-        List<String> topVeggies = new ArrayList<>();
+        List<Integer> topVeggies = new ArrayList<>();
         long highestCount = 0;
         for (Veggie veggie : orderedVeggies) {
             if (highestCount > veggie.getDislikeCount()) {
                 break;
             } else if (veggie.getDislikeCount() > 0) {
                 highestCount = veggie.getDislikeCount();
-                topVeggies.add(veggie.getName());
+                topVeggies.add(veggie.getId());
             }
         }
         return topVeggies;
@@ -92,30 +102,35 @@ public class H2DbService implements DbService {
     }
 
     @Transactional
-    private void updateLikedVeggies(List<String> veggies) {
-        veggies.forEach(v -> {
-                Veggie existingEntry = veggieRepo.findByName(v);
-                existingEntry.setLikeCount(existingEntry.getLikeCount() + 1);
-                veggieRepo.save(existingEntry);
-        });
+    private void updateLikedVeggies(List<Integer> veggies) {
+        veggies.forEach(this::updateLikedVeggie);
+    }
+
+    Veggie updateLikedVeggie(int index) {
+        Veggie veggie = veggieRepo.findById(index);
+        veggie.setLikeCount(veggie.getLikeCount() + 1);
+        return veggie;
     }
 
     @Transactional
-    private void updateDislikedVeggies(List<String> veggies) {
-        veggies.forEach(v -> {
-            Veggie existingEntry = veggieRepo.findByName(v);
-            existingEntry.setDislikeCount(existingEntry.getDislikeCount() + 1);
-            veggieRepo.save(existingEntry);
-        });
+    private void updateDislikedVeggies(List<Integer> veggies) {
+        veggies.forEach(this::updateDislikedVeggie);
+    }
+
+    Veggie updateDislikedVeggie(int index) {
+        Veggie veggie = veggieRepo.findById(index);
+        veggie.setDislikeCount(veggie.getDislikeCount() + 1);
+        return veggie;
     }
 
     @Transactional
-    private void updatePercentageStats(int percentage) {
+    PercentageStats updatePercentageStats(int percentage) {
         PercentageStats percentageStats = percentageStatsRepo.findAll().get(0);
         percentageStats.setEntryCount(percentageStats.getEntryCount() + 1);
         percentageStats.setRunningTotal(percentageStats.getRunningTotal() + percentage);
         percentageStats.setAverage(calculateAverage(percentageStats.getRunningTotal(),
                 percentageStats.getEntryCount()));
+        return percentageStats;
     }
 
     private int calculateAverage(long runningTotal, long entryCount) {
@@ -128,11 +143,19 @@ public class H2DbService implements DbService {
     @Override
     @Transactional
     public void addSubmission(SubmitPollRequest submitPollRequest) {
-        PollSubmission pollSubmission = pollSubmissionRepo.save(dataMapper.createPollSubmission(submitPollRequest));
-        individualEntryRepo.save(dataMapper.createIndividualEntry(submitPollRequest, pollSubmission));
+        PollSubmission pollSubmission = addPollSubmission(dataMapper.createPollSubmission(submitPollRequest));
+        addIndvidualEntry(dataMapper.createIndividualEntry(submitPollRequest, pollSubmission));
 
         updateLikedVeggies(submitPollRequest.getLikedVeggies());
         updateDislikedVeggies(submitPollRequest.getDislikedVeggies());
         updatePercentageStats(submitPollRequest.getPercentage());
+    }
+
+    PollSubmission addPollSubmission(PollSubmission pollSubmission) {
+        return pollSubmissionRepo.save(pollSubmission);
+    }
+
+    IndividualEntry addIndvidualEntry (IndividualEntry individualEntry) {
+        return individualEntryRepo.save(individualEntry);
     }
 }

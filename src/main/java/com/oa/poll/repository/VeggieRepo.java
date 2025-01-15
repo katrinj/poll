@@ -12,5 +12,5 @@ public interface VeggieRepo extends JpaRepository<Veggie, Long> {
 
     List<Veggie> findAllByOrderByDislikeCountDesc();
 
-    Veggie findByName(String name);
+    Veggie findById(Integer id);
 }

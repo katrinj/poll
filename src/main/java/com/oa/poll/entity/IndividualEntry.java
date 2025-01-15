@@ -3,6 +3,7 @@ package com.oa.poll.entity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Data
 public class IndividualEntry {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

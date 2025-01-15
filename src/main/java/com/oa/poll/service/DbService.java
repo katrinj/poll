@@ -5,9 +5,9 @@ import com.oa.poll.dto.SubmitPollRequest;
 import java.util.List;
 
 public interface DbService {
-    List<String> findMostPopularVeggies();
+    List<Integer> findMostPopularVeggies();
 
-    List<String> findLeastPopularVeggies();
+    List<Integer> findLeastPopularVeggies();
 
     int findAverageFrequency();
 

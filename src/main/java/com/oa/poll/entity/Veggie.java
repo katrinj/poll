@@ -19,10 +19,13 @@ import lombok.NoArgsConstructor;
 public class Veggie {
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    long id;
+    int id;
 
     @Column(nullable = false, unique = true)
-    String name;
+    String name_et;
+
+    @Column(nullable = false, unique = true)
+    String name_en;
 
     @Column(name = "like_count")
     long likeCount;

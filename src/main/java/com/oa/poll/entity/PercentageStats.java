@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class PercentageStats {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        long id;
+        int id;
 
         @Column(nullable = false)
         int min;
