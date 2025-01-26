@@ -2,11 +2,11 @@ package com.oa.poll.service;
 
 import com.oa.poll.entity.IndividualEntry;
 import com.oa.poll.entity.PercentageStats;
-import com.oa.poll.entity.PollSubmission;
+import com.oa.poll.entity.PersonalData;
 import com.oa.poll.entity.Veggie;
 import com.oa.poll.repository.IndividualEntryRepo;
 import com.oa.poll.repository.PercentageStatsRepo;
-import com.oa.poll.repository.PollSubmissionRepo;
+import com.oa.poll.repository.PersonalDataRepo;
 import com.oa.poll.repository.VeggieRepo;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,7 +30,7 @@ class H2DbServiceTest {
     @Mock
     private IndividualEntryRepo individualEntryRepo;
     @Mock
-    private PollSubmissionRepo pollSubmissionRepo;
+    private PersonalDataRepo personalDataRepo;
 
     @InjectMocks
     private H2DbService h2DbService;
@@ -212,20 +212,20 @@ class H2DbServiceTest {
     }
 
     @Test
-    void pollSubmissionIsAdded() {
-        PollSubmission pollSubmission = PollSubmission.builder().email("smth@smth.com").build();
-        PollSubmission pollSubmissionExpected = PollSubmission.builder().id(1).email("smth@smth.com").build();
-        given(pollSubmissionRepo.save(pollSubmission)).willReturn(pollSubmissionExpected);
-        PollSubmission pollSubmissionCreated = h2DbService.addPollSubmission(pollSubmission);
-        assertEquals(pollSubmissionExpected, pollSubmissionCreated);
+    void personalDataIsAdded() {
+        PersonalData personalData = PersonalData.builder().email("smth@smth.com").build();
+        PersonalData personalDataExpected = PersonalData.builder().id(1).email("smth@smth.com").build();
+        given(personalDataRepo.save(personalData)).willReturn(personalDataExpected);
+        PersonalData personalDataCreated = h2DbService.addPersonalData(personalData);
+        assertEquals(personalDataExpected, personalDataCreated);
     }
 
     @Test
     void individualEntryIsAdded() {
-        PollSubmission pollSubmission = PollSubmission.builder().id(1).email("smth@smth.com").build();
+        PersonalData personalData = PersonalData.builder().id(1).email("smth@smth.com").build();
         IndividualEntry individualEntry =
                 IndividualEntry.builder()
-                        .pollSubmission(pollSubmission)
+                        .personalData(personalData)
                         .percentage(42)
                         .likeCount(5)
                         .dislikeCount(0)
@@ -233,7 +233,7 @@ class H2DbServiceTest {
         IndividualEntry individualEntryExpected =
                 IndividualEntry.builder()
                         .id(1)
-                        .pollSubmission(pollSubmission)
+                        .personalData(personalData)
                         .percentage(42)
                         .likeCount(5)
                         .dislikeCount(0)

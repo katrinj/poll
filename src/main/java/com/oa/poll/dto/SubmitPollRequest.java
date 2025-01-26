@@ -1,5 +1,6 @@
 package com.oa.poll.dto;
 
+import com.oa.poll.validator.VeggieType;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,10 +21,12 @@ public class SubmitPollRequest {
     @Size(min = 10, message = "Email should be at least 10 characters long.")
     private String email;
 
-    @NotEmpty(message = "List of liked veggies is required.")
+    @NotNull(message = "List of liked veggies is required.")
+    @VeggieType
     private List<Integer> likedVeggies;
 
-    @NotEmpty(message = "List of disliked veggies is required.")
+    @NotNull(message = "List of disliked veggies is required.")
+    @VeggieType
     private List<Integer> dislikedVeggies;
 
     @NotNull(message = "Percentage is required.")

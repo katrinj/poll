@@ -4,12 +4,12 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "poll_submissions")
+@Table(name = "personal_data")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Data
-public class PollSubmission {
+public class PersonalData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;

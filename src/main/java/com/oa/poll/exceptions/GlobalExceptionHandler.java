@@ -1,22 +1,40 @@
 package com.oa.poll.exceptions;
 
-import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    private final static Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<List<String>> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
-        List<String> errorMessages =
-                ex.getBindingResult().getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.toList());
-        return new ResponseEntity<>(errorMessages, HttpStatus.BAD_REQUEST);
+    public ResponseStatusException handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+        Map<String, String> errorMessages = new HashMap<>();
+        ex.getBindingResult().getFieldErrors().forEach(error -> {
+            errorMessages.put(error.getField(), error.getDefaultMessage());
+        });
+        LOGGER.warn(errorMessages.toString(), ex);
+        return new ResponseStatusException(HttpStatus.BAD_REQUEST, errorMessages.toString(), ex);
+    }
+
+    @ExceptionHandler(DbUpdateException.class)
+    public ResponseStatusException handleDbQueryException(DbUpdateException ex) {
+        LOGGER.warn(ex.getMessage(), ex);
+        return new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "DB exception: " + ex.getMessage());
+    }
+
+    @ExceptionHandler(DoubleEntryException.class)
+    public ResponseStatusException handleDoubleEntryException(DoubleEntryException ex) {
+        LOGGER.warn(ex.getMessage(), ex);
+        return new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
 }

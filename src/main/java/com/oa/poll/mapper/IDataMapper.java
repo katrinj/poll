@@ -2,9 +2,9 @@ package com.oa.poll.mapper;
 
 import com.oa.poll.dto.SubmitPollRequest;
 import com.oa.poll.entity.IndividualEntry;
-import com.oa.poll.entity.PollSubmission;
+import com.oa.poll.entity.PersonalData;
 
 public interface IDataMapper {
-    PollSubmission createPollSubmission(SubmitPollRequest submitPollRequest);
-    IndividualEntry createIndividualEntry(SubmitPollRequest submitPollRequest, PollSubmission pollSubmission);
+    PersonalData createPersonalData(SubmitPollRequest submitPollRequest);
+    IndividualEntry createIndividualEntry(SubmitPollRequest submitPollRequest, PersonalData personalData);
 }

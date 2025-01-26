@@ -16,9 +16,9 @@ public class PollService implements IPollService {
 
     @Override
     public SubmitPollResponse handlePollSubmission(SubmitPollRequest submitPollRequest) {
-
         dbService.addSubmission(submitPollRequest);
 
+        // return what you can here, but don't fail request as long as poll submission was successful
         return SubmitPollResponse.builder()
                 .mostPopularVeggies(dbService.findMostPopularVeggies())
                 .leastPopularVeggies(dbService.findLeastPopularVeggies())

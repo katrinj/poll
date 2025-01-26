@@ -2,7 +2,7 @@ package com.oa.poll.mapper;
 
 import com.oa.poll.dto.SubmitPollRequest;
 import com.oa.poll.entity.IndividualEntry;
-import com.oa.poll.entity.PollSubmission;
+import com.oa.poll.entity.PersonalData;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,7 +19,7 @@ class DataMapperTest {
     private DataMapper dataMapper;
 
     @Test
-    void pollSubmissionRequestIsMappedToPollSubmission() {
+    void submitPollRequestIsMappedToPersonalData() {
         String email = "smth@smth.com";
         List<Integer> likedDislikedVeggies = List.of(1, 2, 3);
         SubmitPollRequest submitPollRequest = SubmitPollRequest.builder()
@@ -28,13 +28,13 @@ class DataMapperTest {
                 .dislikedVeggies(likedDislikedVeggies)
                 .percentage(23)
                 .build();
-        PollSubmission pollSubmissionExpected = PollSubmission.builder().email(email).build();
-        PollSubmission pollSubmissionCreated = dataMapper.createPollSubmission(submitPollRequest);
-        assertEquals(pollSubmissionExpected, pollSubmissionCreated);
+        PersonalData personalDataExpected = PersonalData.builder().email(email).build();
+        PersonalData personalDataCreated = dataMapper.createPersonalData(submitPollRequest);
+        assertEquals(personalDataExpected, personalDataCreated);
     }
 
     @Test
-    void pollSubmissionRequestAndPollSubmissionAreMappedToIndividualEntry() {
+    void submitPollRequestAndPersonalDataAreMappedToIndividualEntry() {
         String email = "smth@smth.com";
         List<Integer> likedVeggies = List.of(3, 4, 7, 9, 11);
         List<Integer> dislikedVeggies = List.of(2, 8);
@@ -46,7 +46,7 @@ class DataMapperTest {
                 .dislikedVeggies(dislikedVeggies)
                 .percentage(percentage)
                 .build();
-        PollSubmission pollSubmission = PollSubmission.builder()
+        PersonalData personalData = PersonalData.builder()
                 .id(1)
                 .email(email)
                 .build();
@@ -55,9 +55,9 @@ class DataMapperTest {
                 .likeCount(likedVeggies.size())
                 .dislikeCount(dislikedVeggies.size())
                 .percentage(percentage)
-                .pollSubmission(pollSubmission)
+                .personalData(personalData)
                 .build();
-        IndividualEntry individualEntryCreated = dataMapper.createIndividualEntry(submitPollRequest, pollSubmission);
+        IndividualEntry individualEntryCreated = dataMapper.createIndividualEntry(submitPollRequest, personalData);
         assertEquals(individualEntryExpected, individualEntryCreated);
     }
 }

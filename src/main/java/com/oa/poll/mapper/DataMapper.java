@@ -2,25 +2,25 @@ package com.oa.poll.mapper;
 
 import com.oa.poll.dto.SubmitPollRequest;
 import com.oa.poll.entity.IndividualEntry;
-import com.oa.poll.entity.PollSubmission;
+import com.oa.poll.entity.PersonalData;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DataMapper implements IDataMapper {
     @Override
-    public PollSubmission createPollSubmission(SubmitPollRequest submitPollRequest) {
-        return PollSubmission.builder()
+    public PersonalData createPersonalData(SubmitPollRequest submitPollRequest) {
+        return PersonalData.builder()
                 .email(submitPollRequest.getEmail())
                 .build();
     }
 
     @Override
-    public IndividualEntry createIndividualEntry(SubmitPollRequest submitPollRequest, PollSubmission pollSubmission) {
+    public IndividualEntry createIndividualEntry(SubmitPollRequest submitPollRequest, PersonalData personalData) {
         return IndividualEntry.builder()
                 .percentage(submitPollRequest.getPercentage())
                 .likeCount(submitPollRequest.getLikedVeggies().size())
                 .dislikeCount(submitPollRequest.getDislikedVeggies().size())
-                .pollSubmission(pollSubmission)
+                .personalData(personalData)
                 .build();
     }
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oa.poll.dto.SubmitPollRequest;
 import com.oa.poll.dto.SubmitPollResponse;
 import com.oa.poll.service.PollService;
+import com.oa.poll.validator.LoadedData;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -34,6 +35,7 @@ class PollRestControllerTest {
 
     @Test
     void testSuccessfulSubmission() throws Exception {
+        LoadedData.VEGGIE_KEYS = List.of(1, 2, 3, 4, 5, 6);
         List<Integer> likedVeggies = List.of(1, 2, 5);
         List<Integer> dislikedVeggies = List.of(3, 4);
         int percentage = 45;

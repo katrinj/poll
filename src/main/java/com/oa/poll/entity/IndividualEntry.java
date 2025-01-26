@@ -17,9 +17,9 @@ public class IndividualEntry {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
-    @OneToOne(fetch = FetchType.LAZY, targetEntity = PollSubmission.class)
-    @JoinColumn(name = "poll_submission_id", referencedColumnName = "id", nullable = false)
-    PollSubmission pollSubmission;
+    @OneToOne(fetch = FetchType.LAZY, targetEntity = PersonalData.class)
+    @JoinColumn(name = "personal_data_id", referencedColumnName = "id", nullable = false)
+    PersonalData personalData;
 
     @Column(nullable = false)
     int percentage;
