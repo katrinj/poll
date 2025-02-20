@@ -26,9 +26,17 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(DbUpdateException.class)
-    public ResponseStatusException handleDbQueryException(DbUpdateException ex) {
+    public ResponseStatusException handleDbUpdateException(DbUpdateException ex) {
         LOGGER.warn(ex.getMessage(), ex);
-        return new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "DB exception: " + ex.getMessage());
+        return new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                "DB could not be updated: " + ex.getMessage());
+    }
+
+    @ExceptionHandler(DbQueryException.class)
+    public ResponseStatusException handleDbQueryException(DbQueryException ex) {
+        LOGGER.warn(ex.getMessage(), ex);
+        return new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                "Could not retrieve data: " + ex.getMessage());
     }
 
     @ExceptionHandler(DoubleEntryException.class)

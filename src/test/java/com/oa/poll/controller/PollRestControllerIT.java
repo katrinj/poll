@@ -1,10 +1,8 @@
 package com.oa.poll.controller;
 
 import com.oa.poll.dto.SubmitPollRequest;
-import com.oa.poll.entity.PercentageStats;
 import com.oa.poll.entity.Veggie;
 import com.oa.poll.repository.IndividualEntryRepo;
-import com.oa.poll.repository.PercentageStatsRepo;
 import com.oa.poll.repository.PersonalDataRepo;
 import com.oa.poll.repository.VeggieRepo;
 import org.junit.jupiter.api.*;
@@ -35,7 +33,6 @@ public class PollRestControllerIT {
 
     @Autowired IndividualEntryRepo individualEntryRepo;
     @Autowired PersonalDataRepo personalDataRepo;
-    @Autowired PercentageStatsRepo percentageStatsRepo;
     @Autowired VeggieRepo veggieRepo;
 
     @Autowired
@@ -47,11 +44,7 @@ public class PollRestControllerIT {
     void init() {
         individualEntryRepo.deleteAll();
         personalDataRepo.deleteAll();
-        PercentageStats stats = percentageStatsRepo.findAll().get(0);
-        stats.setRunningTotal(0L);
-        stats.setAverage(0);
-        stats.setEntryCount(0L);
-        percentageStatsRepo.save(stats);
+
         List<Veggie> veggies = veggieRepo.findAll();
         veggies.forEach(v -> {
             v.setLikeCount(0L);
@@ -61,7 +54,7 @@ public class PollRestControllerIT {
     }
 
     @Test
-    void testValidFirstEntryIsSuccessful() throws Exception {
+    void validFirstEntryIsSuccessful() throws Exception {
         List<Integer> likedVeggies = List.of(1, 2, 5);
         List<Integer> dislikedVeggies = List.of(3, 4);
         int percentage = 45;
@@ -82,7 +75,7 @@ public class PollRestControllerIT {
     }
 
     @Test
-    void testValidSecondEntryGetsAggregated() throws Exception {
+    void validSecondEntryGetsAggregated() throws Exception {
         List<Integer> likedVeggies1 = List.of(1, 2, 5);
         List<Integer> dislikedVeggies1 = List.of(3, 4);
         int percentage1 = 45;
@@ -118,7 +111,7 @@ public class PollRestControllerIT {
     }
 
     @Test
-    void testReentryFails() throws Exception {
+    void reentryFails() throws Exception {
         List<Integer> likedVeggies = List.of(1, 2, 5);
         List<Integer> dislikedVeggies = List.of(3, 4);
         int percentage = 25;

@@ -27,9 +27,9 @@ public class Veggie {
     @Column(nullable = false, unique = true)
     String name_en;
 
-    @Column(name = "like_count")
+    @Column(name = "like_count", columnDefinition = "long default 0")
     long likeCount;
 
-    @Column(name = "dislike_count")
+    @Column(name = "dislike_count", columnDefinition = "long default 0")
     long dislikeCount;
 }

@@ -19,7 +19,10 @@ import static org.mockito.BDDMockito.willDoNothing;
 class PollServiceTest {
 
     @Mock
-    private DbService dbService;
+    private IDbSubmitEntry dbSubmitEntry;
+
+    @Mock
+    private IDbQueryStats dbQueryStats;
 
     @InjectMocks
     private PollService pollService;
@@ -37,17 +40,15 @@ class PollServiceTest {
                         .percentage(percentage)
                         .build();
 
-        willDoNothing().given(dbService).addSubmission(submitPollRequest);
-
-        given(dbService.findMostPopularVeggies()).willReturn(likedVeggies);
-        given(dbService.findLeastPopularVeggies()).willReturn(dislikedVeggies);
-        given(dbService.findAverageFrequency()).willReturn(percentage);
+        willDoNothing().given(dbSubmitEntry).addSubmission(submitPollRequest);
 
         SubmitPollResponse submitPollResponseExpected =
                 SubmitPollResponse.builder()
                         .mostPopularVeggies(likedVeggies)
                         .leastPopularVeggies(dislikedVeggies)
                         .averagePercentage(percentage).build();
+
+        given(dbQueryStats.getSubmitPollResponse()).willReturn(submitPollResponseExpected);
 
         SubmitPollResponse submitPollResponse = pollService.handlePollSubmission(submitPollRequest);
         assertEquals(submitPollResponseExpected, submitPollResponse);

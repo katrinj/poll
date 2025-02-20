@@ -2,27 +2,22 @@ package com.oa.poll.service;
 
 import com.oa.poll.dto.SubmitPollRequest;
 import com.oa.poll.dto.SubmitPollResponse;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 
-@Component
+@Service
 public class PollService implements IPollService {
+    private final IDbSubmitEntry dbSubmitEntry;
+    private final IDbQueryStats dbQueryStats;
 
-    private final DbService dbService;
-
-    PollService(DbService dbService) {
-        this.dbService = dbService;
+    PollService(IDbSubmitEntry dbService, IDbQueryStats dbQueryStats) {
+        this.dbSubmitEntry = dbService;
+        this.dbQueryStats = dbQueryStats;
     }
 
     @Override
     public SubmitPollResponse handlePollSubmission(SubmitPollRequest submitPollRequest) {
-        dbService.addSubmission(submitPollRequest);
-
-        // return what you can here, but don't fail request as long as poll submission was successful
-        return SubmitPollResponse.builder()
-                .mostPopularVeggies(dbService.findMostPopularVeggies())
-                .leastPopularVeggies(dbService.findLeastPopularVeggies())
-                .averagePercentage(dbService.findAverageFrequency())
-                .build();
+        dbSubmitEntry.addSubmission(submitPollRequest);
+        return dbQueryStats.getSubmitPollResponse();
     }
 }

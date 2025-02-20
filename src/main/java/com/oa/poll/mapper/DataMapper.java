@@ -1,6 +1,8 @@
 package com.oa.poll.mapper;
 
+import com.oa.poll.dto.PollResults;
 import com.oa.poll.dto.SubmitPollRequest;
+import com.oa.poll.dto.SubmitPollResponse;
 import com.oa.poll.entity.IndividualEntry;
 import com.oa.poll.entity.PersonalData;
 import org.springframework.stereotype.Component;
@@ -24,4 +26,12 @@ public class DataMapper implements IDataMapper {
                 .build();
     }
 
+    @Override
+    public SubmitPollResponse createSubmitPollResponse(PollResults pollResults) {
+        return SubmitPollResponse.builder()
+                .mostPopularVeggies(pollResults.mostPopularVeggies())
+                .leastPopularVeggies(pollResults.leastPopularVeggies())
+                .averagePercentage(pollResults.averagePercentage())
+                .build();
+    }
 }

@@ -8,17 +8,19 @@ import lombok.Data;
 
 import java.util.List;
 
-import static com.oa.poll.dataconfig.PollDataConfig.PERCENTAGE_MIN;
-import static com.oa.poll.dataconfig.PollDataConfig.PERCENTAGE_MAX;
-
 @Data
 @AllArgsConstructor
 @Builder
 public class SubmitPollRequest {
+    private static final int EMAIL_MIN_LENGTH = 10;
+    private static final int EMAIL_MAX_LENGTH = 80;
+    private static final int PERCENTAGE_MIN_VALUE = 0;
+    private static final int PERCENTAGE_MAX_VALUE = 100;
+
     @NotBlank(message = "Email is required.")
     @Email(message = "Email should be in valid format.")
-    @Size(max = 80, message = "Email should be up to 80 characters long.")
-    @Size(min = 10, message = "Email should be at least 10 characters long.")
+    @Size(min = EMAIL_MIN_LENGTH, message = "Email should be at least " + EMAIL_MIN_LENGTH + " characters long.")
+    @Size(max = EMAIL_MAX_LENGTH, message = "Email should be up to " + EMAIL_MAX_LENGTH + " characters long.")
     private String email;
 
     @NotNull(message = "List of liked veggies is required.")
@@ -30,7 +32,7 @@ public class SubmitPollRequest {
     private List<Integer> dislikedVeggies;
 
     @NotNull(message = "Percentage is required.")
-    @Min(value = PERCENTAGE_MIN, message = "Percentage must not be lower than " + PERCENTAGE_MIN)
-    @Max(value = PERCENTAGE_MAX, message = "Percentage must not be higher than " + PERCENTAGE_MAX)
-    private Integer percentage;
+    @Min(value = PERCENTAGE_MIN_VALUE, message = "Percentage must not be lower than " + PERCENTAGE_MIN_VALUE)
+    @Max(value = PERCENTAGE_MAX_VALUE, message = "Percentage must not be higher than " + PERCENTAGE_MAX_VALUE)
+    private int percentage;
 }
